@@ -1,0 +1,6 @@
+.flippable-card-container {
+  /* === Sizing === */
+  height: 24rem;
+  width: 15rem;
+  perspective: 1000px;
+}
