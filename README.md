@@ -1,4 +1,4 @@
 AI Flashcard generator
 
-Contributers:\n
+Contributers:
 * Nirbhay Sirsikar
