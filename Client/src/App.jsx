@@ -217,36 +217,36 @@ export default function App() {
   const submitHandler = async (event) => {
     event.preventDefault();
 
-    // const response = await fetch("http://localhost:5000/quiz", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     quiz,
-    //   }),
-    // });
+    const response = await fetch("http://localhost:5000/quiz", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        quiz,
+      }),
+    });
 
-    // const res = await response.json();
-    const res = {
-      "flashcards": [
-        {
-          "id": 1,
-          "question": "What is the capital of France?",
-          "answer": "Paris"
-        },
-        {
-          "id": 2,
-          "question": "Who painted the Mona Lisa?",
-          "answer": "Leonardo da Vinci"
-        },
-        {
-          "id": 3,
-          "question": "What is the chemical symbol for gold?",
-          "answer": "Au"
-        }
-      ]
-    };
+    const res = await response.json();
+    // const res = {
+    //   "flashcards": [
+    //     {
+    //       "id": 1,
+    //       "question": "What is the capital of France?",
+    //       "answer": "Paris"
+    //     },
+    //     {
+    //       "id": 2,
+    //       "question": "Who painted the Mona Lisa?",
+    //       "answer": "Leonardo da Vinci"
+    //     },
+    //     {
+    //       "id": 3,
+    //       "question": "What is the chemical symbol for gold?",
+    //       "answer": "Au"
+    //     }
+    //   ]
+    // };
     setFlashcards(res.flashcards);
   };
 
