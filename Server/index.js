@@ -74,7 +74,9 @@ app.post("/quiz", async(req,res)=>{
         temperature: 0.9,
     });
     console.log(response.data);
-    res.send(response.data)
+    const MCQ = response.data.choices[0].text;
+    res.send(response.data.choices[0])
+
 
      
 })
