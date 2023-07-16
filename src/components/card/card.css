@@ -1,0 +1,54 @@
+.card {
+    /* Sizing */
+    height: 24rem;
+    width: 15rem;
+    
+    transform-style: preserve-3d;
+  
+    /* Content Alignment */
+    position: relative;
+  
+    /* Styling */
+    border-radius: 5px;
+    margin-left: 835px;
+    margin-right: 850px;
+
+  
+    user-select: none;
+    flex-wrap: wrap;
+    cursor: pointer;
+    position: relative;
+    
+  }
+  
+  .card-front,
+  .card-back {
+    /* Sizing */
+    height: 24rem;
+    width: 15rem;
+  
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  
+    /* Alignment */
+    position: absolute;
+  
+    /* Content Alignment */
+    display: flex;
+   
+  
+    
+  }
+  
+  .card-front {
+    background-color: rgb(17,24,39);
+  }
+  
+  .card-back {
+    background-color: rgb(17,24,39);
+    transform: rotateY(180deg);
+  }
+  .Button {
+    margin-left: 835px;
+    margin-right: 850px;
+  }
