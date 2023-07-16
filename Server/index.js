@@ -15,7 +15,7 @@ app.use(cors())
 // Open-ai key
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.OPENAI_API_KEY, //Add your openAI api key in .env file with variable name OPENAI_API_KEY
 });
 const openai = new OpenAIApi(configuration);
 
