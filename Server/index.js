@@ -49,7 +49,7 @@ app.post("/quiz", async(req,res)=>{
     // Number of quiz
 
     //Prompt
-    const prompt = `Generate "3" flashcards  for "${quiz}" in the json format only like "{
+    cconst prompt = `Generate more than 3 flashcards  for "${quiz}" in the json format only like "{
           "flashcards": [
             {
               "id": 1,
