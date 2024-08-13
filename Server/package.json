@@ -19,6 +19,7 @@
   "homepage": "https://github.com/NirbhaySirsikar/AI_flashcard_generator#readme",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "cohere-ai": "^7.12.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
