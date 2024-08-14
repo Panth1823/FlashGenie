@@ -1,34 +1,6 @@
-import { useState } from "react";
-import CardFlip from "react-card-flip";
-
-const Flashcard = ({ question, answer }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-
-  const handleClick = () => {
-    setIsFlipped(!isFlipped);
-  };
-
-  return (
-    <div className="max-w-lg w-full p-4">
-      <div className="card rounded-lg overflow-hidden bg-white">
-        <CardFlip isFlipped={isFlipped}>
-          <div
-            className="card-front bg-gradient-to-r from-violet-600 to-indigo-600 text-white flex items-center justify-center text-lg font-semibold py-24 px-8"
-            onClick={handleClick}
-          >
-            {question}
-          </div>
-          <div
-            className="card-back bg-gradient-to-r from-amber-500 to-pink-500 text-white flex items-center justify-center py-24 px-8"
-            onClick={handleClick}
-          >
-            <div className="text-lg font-semibold">{answer}</div>
-          </div>
-        </CardFlip>
-      </div>
-    </div>
-  );
-};
+import { useState, useEffect } from "react";
+import Flashcard from "./Flashcard";
+import Navbar from "./Navbar";
 
 const Home = () => {
   const [quiz, setQuiz] = useState("");
@@ -71,30 +43,10 @@ const Home = () => {
   };
 
   return (
-    <div className="pt-20">
-      <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 left-0 border-b border-gray-200 dark:border-gray-600 shadow-2xl">
-        <div className="flex flex-wrap items-center mx-auto p-4">
-          <a href="/" className="flex items-center">
-            <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              className="h-8 mr-3"
-              alt="Flowbite Logo"
-            />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-              AI Flashcard
-            </span>
-          </a>
-          <div className="flex md:order-2"></div>
-          <div
-            className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
-            id="navbar-sticky"
-          >
-            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"></ul>
-          </div>
-        </div>
-      </nav>
+    <>
+      <Navbar />
 
-      <div className="flex justify-center items-center pt-10">
+      <div className="flex justify-center items-center mt-52">
         <div className="w-1/2 px-4 border-2 rounded-xl bg-slate-900 h-auto shadow-2xl">
           <form onSubmit={submitHandler}>
             <div className="flex items-center pt-5">
@@ -102,7 +54,7 @@ const Home = () => {
                 type="text"
                 value={quiz}
                 onChange={handleMessageChange}
-                className="block p-2.5 w-full text-sm text-white font-mono h-20 bg-gray-50 rounded-lg border dark:bg-gray-700"
+                className="block p-2.5 w-full text-sm text-black font-bold h-20 bg-gray-50 rounded-xl resize-none border dark:bg-gray-700"
                 placeholder="Enter your text here..."
                 required
               />
@@ -130,7 +82,7 @@ const Home = () => {
           />
         ))}
       </div>
-    </div>
+    </>
   );
 };
 
