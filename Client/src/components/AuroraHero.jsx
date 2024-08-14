@@ -10,7 +10,7 @@ import {
 } from "framer-motion";
 import Input from "./Input";
 import FlashcardGrid from "./FlashcardGrid";
-
+import SparklesText from "@/components/magicui/sparkles-text";
 // Updated to only include shades of blue
 const COLORS_TOP = ["#00BFFF", "#1E90FF"];
 
@@ -79,8 +79,9 @@ export const AuroraHero = () => {
       className="relative grid min-h-screen place-content-center overflow-hidden bg-gray-950 px-4 py-24 text-gray-200"
     >
       <div className="relative z-10 flex flex-col items-center">
-        <h1 className="max-w-3xl bg-gradient-to-br from-white to-gray-400 bg-clip-text text-center text-3xl font-medium leading-tight text-transparent sm:text-5xl sm:leading-tight md:text-7xl md:leading-tight">
-          Transform Learning with AI-Powered Flashcards
+        <h1 className="max-w-3xl text-center text-xl font-medium leading-tight text-transparent sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight text-white">
+          Flip, Learn, and Level up with
+          <SparklesText text="AI-Powered Flashcards" />
         </h1>
         <p className="my-6 max-w-xl text-center text-base leading-relaxed md:text-lg md:leading-relaxed">
           Enhance learning efficiency with personalized flashcard quizzes.

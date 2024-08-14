@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types"; // Add PropTypes import
-
+import { FiArrowRight } from "react-icons/fi";
+import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 const Input = ({
   quiz,
   handleMessageChange,
@@ -8,6 +9,10 @@ const Input = ({
   error,
   loading,
 }) => {
+  const COLORS_TOP = ["#00BFFF", "#1E90FF"];
+  const color = useMotionValue(COLORS_TOP[0]);
+  const border = useMotionTemplate`1px solid ${color}`;
+  const boxShadow = useMotionTemplate`0px 4px 24px ${color}`;
   return (
     <>
       <div className="flex justify-center items-center mt-52 z-50">
@@ -18,20 +23,27 @@ const Input = ({
                 type="text"
                 value={quiz}
                 onChange={handleMessageChange}
-                className="block p-2.5 w-full text-sm capitalize text-black font-bold h-20 bg-gray-50 rounded-xl resize-none border dark:bg-gray-700"
+                className="block p-2.5 w-full text-sm capitalize text-black font-bold h-20 bg-gray-50 rounded-xl resize-none border dark:bg-gray-700 outline-none"
                 placeholder="Who painted the Mona Lisa?"
                 required
               />
             </div>
-            <div className="flex justify-center pt-5">
-              <button
-                type="submit"
-                className="relative inline-flex items-center justify-center p-0.5 mb-4 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800"
+            <div className="flex justify-center p-5">
+              <motion.button
+                style={{
+                  border,
+                  boxShadow,
+                }}
+                whileHover={{
+                  scale: 1.015,
+                }}
+                whileTap={{
+                  scale: 0.985,
+                }}
+                className="group relative flex w-fit items-center gap-1.5 rounded-full bg-gray-950/10 px-4 py-2 text-gray-50 transition-colors hover:bg-gray-950/50"
               >
-                <span className="relative p-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-                  Generate
-                </span>
-              </button>
+                Generate
+              </motion.button>
             </div>
           </form>
           {error && (
