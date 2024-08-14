@@ -11,16 +11,16 @@ const Flashcard = ({ question, answer }) => {
 
   return (
     <div className="max-w-lg w-full p-4">
-      <div className="card rounded-xl overflow-hidden bg-white cursor-pointer">
+      <div className="card rounded-xl overflow-hidden cursor-pointer">
         <CardFlip isFlipped={isFlipped}>
           <div
-            className="card-front bg-gradient-to-r from-violet-600 to-indigo-600 text-white flex items-center justify-center text-lg font-semibold py-24 px-8"
+            className="card-front bg-gradient-to-r from-violet-600 to-indigo-600 text-white flex items-center justify-center text-lg font-semibold py-24 px-8 w-80% h-40"
             onClick={handleClick}
           >
             {question}
           </div>
           <div
-            className="card-back bg-gradient-to-r from-amber-500 to-pink-500 text-white flex items-center justify-center py-24 px-8"
+            className="card-back bg-gradient-to-r from-amber-500 to-pink-500 text-white flex items-center justify-center py-24 px-8 w-80% h-40"
             onClick={handleClick}
           >
             <div className="text-lg font-semibold">{answer}</div>

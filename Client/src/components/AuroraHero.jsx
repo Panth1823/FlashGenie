@@ -1,6 +1,6 @@
 import { Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import {
   useMotionTemplate,
@@ -8,12 +8,18 @@ import {
   motion,
   animate,
 } from "framer-motion";
+import Input from "./Input";
+import FlashcardGrid from "./FlashcardGrid";
 
 // Updated to only include shades of blue
 const COLORS_TOP = ["#00BFFF", "#1E90FF"];
 
 export const AuroraHero = () => {
   const color = useMotionValue(COLORS_TOP[0]);
+  const [quiz, setQuiz] = useState("");
+  const [flashcards, setFlashcards] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false); // New state for loader
 
   useEffect(() => {
     animate(color, COLORS_TOP, {
@@ -27,6 +33,43 @@ export const AuroraHero = () => {
   const backgroundImage = useMotionTemplate`radial-gradient(125% 125% at 50% 0%, #020617 50%, ${color})`;
   const border = useMotionTemplate`1px solid ${color}`;
   const boxShadow = useMotionTemplate`0px 4px 24px ${color}`;
+
+  const handleMessageChange = (e) => {
+    setQuiz(e.target.value);
+  };
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    setLoading(true); // Show loader
+
+    try {
+      const response = await fetch("http://localhost:5000/quiz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ quiz }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+
+      if (data.flashcards && Array.isArray(data.flashcards)) {
+        setFlashcards(data.flashcards);
+        setError(null);
+      } else {
+        throw new Error("Unexpected response format");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setError("An error occurred while generating the quiz.");
+    } finally {
+      setLoading(false); // Hide loader
+    }
+  };
 
   return (
     <motion.section
@@ -65,6 +108,14 @@ export const AuroraHero = () => {
           <Stars radius={50} count={2500} factor={4} fade speed={2} />
         </Canvas>
       </div>
+      <Input
+        quiz={quiz}
+        handleMessageChange={handleMessageChange}
+        submitHandler={submitHandler}
+        error={error}
+        loading={loading}
+      />
+      <FlashcardGrid flashcards={flashcards} />
     </motion.section>
   );
 };
