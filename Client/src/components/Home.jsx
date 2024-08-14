@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Flashcard from "./Flashcard";
-import Navbar from "./Navbar";
+import { AuroraHero } from "./AuroraHero";
 
 const Home = () => {
   const [quiz, setQuiz] = useState("");
   const [response, setResponse] = useState(null);
   const [flashcards, setFlashcards] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false); // New state for loader
 
   const handleMessageChange = (e) => {
     setQuiz(e.target.value);
@@ -14,6 +15,7 @@ const Home = () => {
 
   const submitHandler = async (event) => {
     event.preventDefault();
+    setLoading(true); // Show loader
 
     try {
       const response = await fetch("http://localhost:5000/quiz", {
@@ -39,13 +41,14 @@ const Home = () => {
     } catch (error) {
       console.error("Error:", error);
       setError("An error occurred while generating the quiz.");
+    } finally {
+      setLoading(false); // Hide loader
     }
   };
 
   return (
     <>
-      <Navbar />
-
+      <AuroraHero />
       <div className="flex justify-center items-center mt-52">
         <div className="w-1/2 px-4 border-2 rounded-xl bg-slate-900 h-auto shadow-2xl">
           <form onSubmit={submitHandler}>
@@ -60,7 +63,10 @@ const Home = () => {
               />
             </div>
             <div className="flex justify-center pt-5">
-              <button className="relative inline-flex items-center justify-center p-0.5 mb-4 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800">
+              <button
+                type="submit"
+                className="relative inline-flex items-center justify-center p-0.5 mb-4 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800"
+              >
                 <span className="relative p-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
                   Generate
                 </span>
@@ -72,8 +78,12 @@ const Home = () => {
           )}
         </div>
       </div>
-
-      <div className="pt-5 grid grid-cols-3 gap-4">
+      {loading && (
+        <div className="flex justify-center items-center mt-10">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent border-solid rounded-full animate-spin"></div>
+        </div>
+      )}
+      <div className="p-5 grid grid-cols-3 gap-4">
         {flashcards.map((flashcard) => (
           <Flashcard
             key={flashcard.id}
