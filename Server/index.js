@@ -18,9 +18,8 @@ app.post("/quiz", async (req, res) => {
     const { quiz } = req.body;
     console.log(`Received prompt: ${quiz}`);
 
-    // Validate the prompt: reject if it's only numbers
     if (/^\d+$/.test(quiz)) {
-        return res.status(400).json({ error: "An error occurred while generating the quiz. Prompt cannot be a number only." });
+        return res.status(400).json({ error: "Prompt cannot be a number only." });
     }
 
     const prompt = `Generate more than 3 flashcards for the topic "${quiz}". Each flashcard should be in the following JSON format:
@@ -52,34 +51,34 @@ app.post("/quiz", async (req, res) => {
             message: prompt
         });
 
-        // Sanitize and clean the response
+        // Extract the JSON part from the response
         let responseText = response.text
-            .replace(/```json/g, '')
-            .replace(/```/g, '')
-            .trim();
+            .split('```json')[1] // Split by the start of the JSON part
+            .split('```')[0]    // Split by the end of the JSON part
+            .trim();            // Remove any extra whitespace
 
-        // Attempt to parse the JSON
+
+
+        // Parse the JSON response
         let flashcards;
         try {
             flashcards = JSON.parse(responseText);
         } catch (parseError) {
+            console.error("JSON parse error:", parseError.message);
             throw new Error("Received invalid JSON response");
         }
 
-        // Limit the length of the answer
         if (flashcards.flashcards && Array.isArray(flashcards.flashcards)) {
             flashcards.flashcards.forEach(card => {
                 card.answer = card.answer.slice(0, 150); // Adjust this value as needed
             });
-
-            console.log('Parsed flashcards:', flashcards);
-            res.json(flashcards); // Send parsed JSON response
+            res.json(flashcards);
         } else {
             throw new Error("Unexpected response format");
         }
     } catch (error) {
         console.error("Error generating quiz:", error.message);
-        res.status(500).json({ error: "An error occurred while generating the quiz." });
+        res.status(500).json({ error: `An error occurred while generating the quiz: ${error.message}` });
     }
 });
 
