@@ -1,31 +1,16 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "flashcardai",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "test": "vitest"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/NirbhaySirsikar/AI_flashcard_generator.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/NirbhaySirsikar/AI_flashcard_generator/issues"
-  },
-  "homepage": "https://github.com/NirbhaySirsikar/AI_flashcard_generator#readme",
-  "dependencies": {
-    "body-parser": "^1.20.2",
-    "cohere-ai": "^7.12.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.18.2",
-    "express-rate-limit": "^7.4.0",
-    "helmet": "^7.1.0",
-    "nodemon": "^3.0.1",
-    "openai": "^3.3.0"
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.4.5",
+    "wrangler": "^3.60.3",
+    "vitest": "1.5.0"
   }
 }

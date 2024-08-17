@@ -11,6 +11,7 @@ import {
 import Input from "./Input";
 import FlashcardGrid from "./FlashcardGrid";
 import SparklesText from "@/components/magicui/sparkles-text";
+
 // Updated to only include shades of blue
 const COLORS_TOP = ["#00BFFF", "#1E90FF"];
 
@@ -19,7 +20,8 @@ export const AuroraHero = () => {
   const [quiz, setQuiz] = useState("");
   const [flashcards, setFlashcards] = useState([]);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false); // New state for loader
+  const [loading, setLoading] = useState(false); // Loader state
+  const [showQuiz, setShowQuiz] = useState(false); // State to toggle visibility
 
   useEffect(() => {
     animate(color, COLORS_TOP, {
@@ -43,7 +45,7 @@ export const AuroraHero = () => {
     setLoading(true); // Show loader
 
     try {
-      const response = await fetch("http://localhost:5000/quiz", {
+      const response = await fetch("http://127.0.0.1:8787/quiz", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,23 +54,36 @@ export const AuroraHero = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error(`Network response was not ok: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const contentType = response.headers.get("Content-Type");
 
-      if (data.flashcards && Array.isArray(data.flashcards)) {
-        setFlashcards(data.flashcards);
-        setError(null);
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+
+        // Check if data is an array
+        if (Array.isArray(data)) {
+          setFlashcards(data);
+          setError(null);
+        } else {
+          throw new Error("Unexpected response format: data is not an array");
+        }
       } else {
-        throw new Error("Unexpected response format");
+        throw new Error(`Unexpected content type: ${contentType}`);
       }
     } catch (error) {
       console.error("Error:", error);
-      setError("An error occurred while generating the quiz.");
+      setError(
+        "An error occurred while generating the quiz. Please try again."
+      );
     } finally {
       setLoading(false); // Hide loader
     }
+  };
+
+  const handleButtonClick = () => {
+    setShowQuiz(true); // Show quiz inputs and flashcards
   };
 
   return (
@@ -97,26 +112,44 @@ export const AuroraHero = () => {
           whileTap={{
             scale: 0.985,
           }}
+          onClick={handleButtonClick} // Show quiz form and flashcards on click
           className="group relative flex w-fit items-center gap-1.5 rounded-full bg-gray-950/10 px-4 py-2 text-gray-50 transition-colors hover:bg-gray-950/50"
         >
           Try It Free
           <FiArrowRight className="transition-transform group-hover:-rotate-45 group-active:-rotate-12" />
         </motion.button>
       </div>
-
       <div className="absolute inset-0 z-0">
         <Canvas>
           <Stars radius={50} count={2500} factor={4} fade speed={2} />
         </Canvas>
       </div>
-      <Input
-        quiz={quiz}
-        handleMessageChange={handleMessageChange}
-        submitHandler={submitHandler}
-        error={error}
-        loading={loading}
-      />
-      <FlashcardGrid flashcards={flashcards} />
+      {/* Display loader when generating flashcards */}
+      {loading ? (
+        <div className="text-center mt-4">
+          <p>Generating flashcards...</p>
+        </div>
+      ) : showQuiz ? (
+        <>
+          {/* Smooth transition for Input and FlashcardGrid */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="mt-8 z-50"
+          >
+            <Input
+              quiz={quiz}
+              handleMessageChange={handleMessageChange}
+              submitHandler={submitHandler}
+              error={error}
+              loading={loading}
+            />
+            <FlashcardGrid flashcards={flashcards} />
+          </motion.div>
+        </>
+      ) : null}{" "}
+      {/* Only show quiz and flashcards after button click */}
     </motion.section>
   );
 };

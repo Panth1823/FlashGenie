@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types"; // Add PropTypes import
-import { FiArrowRight } from "react-icons/fi";
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 const Input = ({
   quiz,
@@ -15,15 +14,15 @@ const Input = ({
   const boxShadow = useMotionTemplate`0px 4px 24px ${color}`;
   return (
     <>
-      <div className="flex justify-center items-center mt-52 z-50">
-        <div className="w-1/2 px-4 border-2 rounded-xl bg-slate-900 h-auto shadow-2xl">
+      <div className="flex justify-center items-center  z-50">
+        <div className="w-1/2 px-4 border-2 rounded-xl bg-slate-900 h-auto shadow-2xl z-50">
           <form onSubmit={submitHandler}>
             <div className="flex items-center pt-5">
               <textarea
                 type="text"
                 value={quiz}
                 onChange={handleMessageChange}
-                className="block p-2.5 w-full text-sm capitalize text-black font-bold h-20 bg-gray-50 rounded-xl resize-none border dark:bg-gray-700 outline-none"
+                className="block p-2.5 w-full text-sm text-black font-bold h-20 bg-gray-50 rounded-xl resize-none border dark:bg-gray-700 outline-none"
                 placeholder="Who painted the Mona Lisa?"
                 required
               />
