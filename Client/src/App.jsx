@@ -1,5 +1,5 @@
 import React from "react";
-import { AuroraHero } from "./components/AuroraHero";
+import { AuroraHero } from "./components/Home";
 
 const App = () => {
   return (

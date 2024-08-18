@@ -16,21 +16,22 @@ export default {
 			try {
 				const { quiz } = await request.json();
 
-				// Validate input
+				// Validate input: Prevent number-only prompts
 				if (/^\d+$/.test(quiz)) {
-					return new Response(JSON.stringify({ error: 'Prompt cannot be a number only.' }), { status: 400 });
+					return new Response(JSON.stringify({ error: 'Prompt cannot be a number only.' }), {
+						status: 400,
+						headers: { 'Access-Control-Allow-Origin': '*' },
+					});
 				}
 
 				// Construct the AI prompt
 				const prompt = `Generate 6 flashcards for the topic "${quiz}". Each flashcard should be in JSON format like:
-
-  {
-	"id": 1,
-	"question": "What is the question?",
-	"answer": "The answer"
-  }
-
-  Please provide only the JSON data without any additional text or explanations.`;
+				{
+ 				"id": 1,
+  				"question": "What is the question?",
+ 				"answer": "The answer"
+				}
+				Please provide only the JSON data without any additional text or explanations.`;
 
 				// Call the AI model
 				const aiResponse = await env.AI.run('@cf/mistral/mistral-7b-instruct-v0.1', {
@@ -62,10 +63,16 @@ export default {
 				});
 			} catch (error) {
 				console.error('Request Handling Error:', error);
-				return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+				return new Response(JSON.stringify({ error: error.message }), {
+					status: 500,
+					headers: { 'Access-Control-Allow-Origin': '*' },
+				});
 			}
 		}
 
-		return new Response('Invalid request method.', { status: 405 });
+		return new Response('Invalid request method.', {
+			status: 405,
+			headers: { 'Access-Control-Allow-Origin': '*' },
+		});
 	},
 };
