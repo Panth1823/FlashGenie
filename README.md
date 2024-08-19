@@ -47,33 +47,31 @@ FlashGenie is a user-friendly web app that allows users to input text, documents
 
     ```bash
     # For the server
-    cd server
+    cd ./server
     npm install
     
     # For the client
-    cd client
+    cd ./client
     npm install
     ```
 
 4. Start the server.
 
     ```bash
-    cd server
-    npm run start
+    npm run dev or wrangelr dev
     ```
 
 5. Start the client in development mode.
 
     ```bash
-    cd client
     npm run dev
     ```
 
-The server should now be running, and the client can be accessed at `http://localhost:3000`.
+The server should now be running, and the client can be accessed at `http://127.0.0.1:8787`.
 
 ## Usage
 
-1. Access the app through the provided URL or locally at `http://localhost:3000`.
+1. Access the app through the provided URL or locally at `http://localhost:5173`.
 2. Input your desired content in the provided text area.
 3. Click the "Generate" button to convert the input content into interactive flashcards.
 
