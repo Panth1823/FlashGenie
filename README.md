@@ -67,7 +67,7 @@ FlashGenie is a user-friendly web app that allows users to input text, documents
     npm run dev
     ```
 
-The server should now be running, and the client can be accessed at `http://127.0.0.1:8787`.
+The server should now be running, and the client can be accessed at `http://localhost:5173`.
 
 ## Usage
 
