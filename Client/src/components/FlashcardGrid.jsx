@@ -1,4 +1,4 @@
-import PropTypes from "prop-types"; // Add PropTypes import
+import PropTypes from "prop-types";
 import Flashcard from "./Flashcard";
 
 const FlashcardGrid = ({ flashcards }) => {
@@ -15,7 +15,6 @@ const FlashcardGrid = ({ flashcards }) => {
   );
 };
 
-// Add PropTypes to validate props
 FlashcardGrid.propTypes = {
   flashcards: PropTypes.arrayOf(
     PropTypes.shape({

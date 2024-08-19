@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --color-user-menu-hover: #383b42;
+    --color-gpt3: #5fc319;
+    --color-user-message-border: #2f353d;
+}
