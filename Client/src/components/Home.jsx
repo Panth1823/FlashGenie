@@ -103,9 +103,6 @@ export const AuroraHero = () => {
                 Flip, Learn, and Level up with AI-Powered Flashcards
               </TextEffect>
             </h1>
-            <p className=" max-w-xl text-center text-base leading-relaxed md:text-lg md:leading-relaxed">
-              Enhance learning efficiency with personalized flashcard quizzes.
-            </p>
             {buttonVisible && (
               <motion.button
                 style={{

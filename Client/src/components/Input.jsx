@@ -21,12 +21,11 @@ const Input = ({ quiz, handleMessageChange, submitHandler, error }) => {
               value={quiz}
               required
               onChange={handleMessageChange}
-              placeholder="Who painted the Mona Lisa?"
+              placeholder="Generate flashcards about ancient egyptian civilization?"
               className="w-full bg-[var(--color-user-menu-hover)] border border-[var(--color-user-message-border)] rounded-[13px] box-border px-[15px] py-[17px] pr-[85px] text-[var(--color-white)] font-inherit text-base outline-none placeholder:text-[var(--color-groupings)] resize-none placeholder:opacity-80"
             />
             <div className="text-[var(--color-disclaimer)] text-[0.7em] disclaimer">
-              This is a ChatGPT UI Clone for personal use and educational
-              purposes only.
+            Please keep your prompt concise. Longer prompts may lead to errors, and model accuracy is not guaranteed.
             </div>
             <motion.button
               style={{
