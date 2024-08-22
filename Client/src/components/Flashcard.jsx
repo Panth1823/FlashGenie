@@ -1,4 +1,3 @@
-// src/components/Flashcard.jsx
 import { useState } from "react";
 import CardFlip from "react-card-flip";
 

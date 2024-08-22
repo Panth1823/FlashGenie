@@ -1,6 +1,6 @@
 export default {
 	async fetch(request, env) {
-		// Handle preflight OPTIONS requests for CORS
+
 		if (request.method === 'OPTIONS') {
 			return new Response(null, {
 				status: 204,
@@ -16,7 +16,7 @@ export default {
 			try {
 				const { quiz } = await request.json();
 
-				// Validate input: Prevent number-only prompts
+
 				if (/^\d+$/.test(quiz)) {
 					return new Response(JSON.stringify({ error: 'Prompt cannot be a number only.' }), {
 						status: 400,
@@ -24,7 +24,7 @@ export default {
 					});
 				}
 
-				// Construct the AI prompt
+
 				const prompt = `Generate 6 flashcards for the topic "${quiz}". Each flashcard should be in JSON format like:
 				{
  				"id": 1,
@@ -33,7 +33,7 @@ export default {
 				}
 				Please provide only the JSON data without any additional text or explanations.`;
 
-				// Call the AI model
+
 				const aiResponse = await env.AI.run('@cf/mistral/mistral-7b-instruct-v0.1', {
 					prompt,
 					raw: true,
@@ -43,7 +43,6 @@ export default {
 				const responseText = aiResponse.response.trim();
 				console.log('AI Response:', responseText);
 
-				// Attempt to parse the response as JSON
 				let flashcardsData;
 				try {
 					flashcardsData = JSON.parse(responseText);
