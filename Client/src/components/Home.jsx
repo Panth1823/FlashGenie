@@ -13,7 +13,7 @@ import FlashcardGrid from "./FlashcardGrid";
 import { TextEffect } from "./magicui/TextEffect";
 
 const COLORS_TOP = ["#00BFFF", "#1E90FF"];
-export const AuroraHero = () => {
+export const Home = () => {
   const color = useMotionValue(COLORS_TOP[0]);
   const [quiz, setQuiz] = useState("");
   const [flashcards, setFlashcards] = useState([]);

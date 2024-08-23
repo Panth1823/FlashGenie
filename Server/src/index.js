@@ -1,6 +1,5 @@
 export default {
 	async fetch(request, env) {
-
 		if (request.method === 'OPTIONS') {
 			return new Response(null, {
 				status: 204,
@@ -16,26 +15,32 @@ export default {
 			try {
 				const { quiz } = await request.json();
 
-
-				if (/^\d+$/.test(quiz)) {
-					return new Response(JSON.stringify({ error: 'Prompt cannot be a number only.' }), {
+				if (typeof quiz !== 'string' || quiz.trim() === '') {
+					return new Response(JSON.stringify({ error: 'Prompt must be a non-empty string.' }), {
 						status: 400,
 						headers: { 'Access-Control-Allow-Origin': '*' },
 					});
 				}
 
-
-				const prompt = `Generate 6 flashcards for the topic "${quiz}". Each flashcard should be in JSON format like:
-				{
- 				"id": 1,
-  				"question": "What is the question?",
- 				"answer": "The answer"
-				}
-				Please provide only the JSON data without any additional text or explanations.`;
-
+				const messages = [
+					{
+						role: "system",
+						content: `You are an AI that generates flashcards based on the provided topic. Generate 6 flashcards in JSON format as follows:
+						{
+							"id": 1,
+							"question": "What is the question?",
+							"answer": "The answer"
+						}
+						Only provide the JSON data without any additional text or explanations.`
+					},
+					{
+						role: "user",
+						content: `Topic: ${quiz}`
+					}
+				];
 
 				const aiResponse = await env.AI.run('@cf/mistral/mistral-7b-instruct-v0.1', {
-					prompt,
+					prompt: JSON.stringify(messages),
 					raw: true,
 					stream: false,
 				});
@@ -50,8 +55,8 @@ export default {
 					throw new Error('Response does not contain valid JSON.');
 				}
 
-				if (!Array.isArray(flashcardsData)) {
-					throw new Error('Response JSON is not an array.');
+				if (!Array.isArray(flashcardsData) || flashcardsData.length === 0) {
+					throw new Error('Response JSON is not a valid array or is empty.');
 				}
 
 				return new Response(JSON.stringify(flashcardsData), {

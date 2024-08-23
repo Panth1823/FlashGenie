@@ -1,10 +1,10 @@
 import React from "react";
-import { AuroraHero } from "./components/Home";
+import { Home } from "./components/Home";
 
 const App = () => {
   return (
     <>
-      <AuroraHero />
+      <Home />
     </>
   );
 };

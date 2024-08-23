@@ -22,10 +22,10 @@ const Input = ({ quiz, handleMessageChange, submitHandler, error }) => {
               required
               onChange={handleMessageChange}
               placeholder="Generate flashcards about ancient egyptian civilization?"
-              className="w-full bg-[var(--color-user-menu-hover)] border border-[var(--color-user-message-border)] rounded-[13px] box-border px-[15px] py-[17px] pr-[85px] text-[var(--color-white)] font-inherit text-base outline-none placeholder:text-[var(--color-groupings)] resize-none placeholder:opacity-80"
+              className="w-full bg-[var(--color-user-menu-hover)] border border-[var(--color-user-message-border)] rounded-2xl box-border p-[15px]  text-[var(--color-white)] font-inherit text-base outline-none placeholder:text-[var(--color-groupings)] resize-none placeholder:opacity-80"
             />
             <div className="text-[var(--color-disclaimer)] text-[0.7em] disclaimer">
-            Please keep your prompt concise. Longer prompts may lead to errors, and model accuracy is not guaranteed.
+              Please keep your prompt concise. Longer prompts may lead to errors, and model accuracy is not guaranteed.
             </div>
             <motion.button
               style={{
