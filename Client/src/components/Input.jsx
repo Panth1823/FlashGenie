@@ -43,7 +43,7 @@ const Input = ({ quiz, handleMessageChange, submitHandler, error }) => {
               Generate
             </motion.button>
 
-            <div className="w-1/2 px-4  rounded-xl  h-auto shadow-2xl z-50">
+            <div className="w-full rounded-xl  h-auto shadow-2xl z-50">
               {error && (
                 <div className="text-red-500 text-center mt-4">{error}</div>
               )}
