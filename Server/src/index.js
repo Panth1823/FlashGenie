@@ -25,13 +25,12 @@ export default {
 				const messages = [
 					{
 						role: "system",
-						content: `You are an AI that generates flashcards based on the provided topic. Generate 6 flashcards in JSON format as follows:
-						{
-							"id": 1,
-							"question": "What is the question?",
-							"answer": "The answer"
-						}
-						Only provide the JSON data without any additional text or explanations.`
+						content: `You are an AI that generates flashcards based on the provided topic. Generate exactly 6 flashcards in JSON format as follows:
+						[
+							{ "id": 1, "question": "What is the question?", "answer": "The answer" },
+							...
+						]
+						Respond with only valid JSON, without any additional text or explanation.`
 					},
 					{
 						role: "user",
@@ -46,17 +45,28 @@ export default {
 				});
 
 				const responseText = aiResponse.response.trim();
-				console.log('AI Response:', responseText);
+				console.log('Raw AI Response:', responseText);
 
 				let flashcardsData;
-				try {
-					flashcardsData = JSON.parse(responseText);
-				} catch (jsonError) {
+
+				// Attempt to extract the JSON from the response
+				const jsonStartIndex = responseText.indexOf('[');
+				const jsonEndIndex = responseText.lastIndexOf(']');
+
+				if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
+					const jsonString = responseText.substring(jsonStartIndex, jsonEndIndex + 1);
+					try {
+						flashcardsData = JSON.parse(jsonString);
+					} catch (jsonError) {
+						throw new Error('Response contains malformed JSON.');
+					}
+				} else {
 					throw new Error('Response does not contain valid JSON.');
 				}
 
-				if (!Array.isArray(flashcardsData) || flashcardsData.length === 0) {
-					throw new Error('Response JSON is not a valid array or is empty.');
+				// Validate if the parsed data is an array of flashcards
+				if (!Array.isArray(flashcardsData) || flashcardsData.length !== 6) {
+					throw new Error('Response JSON is not a valid array of 6 flashcards.');
 				}
 
 				return new Response(JSON.stringify(flashcardsData), {
@@ -66,7 +76,7 @@ export default {
 					},
 				});
 			} catch (error) {
-				console.error('Request Handling Error:', error);
+				console.error('Request Handling Error:', error.message);
 				return new Response(JSON.stringify({ error: error.message }), {
 					status: 500,
 					headers: { 'Access-Control-Allow-Origin': '*' },
