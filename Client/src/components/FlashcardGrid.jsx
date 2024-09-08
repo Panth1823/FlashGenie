@@ -4,13 +4,17 @@ import Flashcard from "./Flashcard";
 const FlashcardGrid = ({ flashcards }) => {
   return (
     <div className="p-5 lg:grid md:grid md:grid-cols-2 xl:grid grid-cols-3 gap-4 sm:flex ">
-      {flashcards.map((flashcard) => (
-        <Flashcard
-          key={flashcard.id}
-          question={flashcard.question}
-          answer={flashcard.answer}
-        />
-      ))}
+      {flashcards.length > 0 ? (
+        flashcards.map((flashcard, index) => (
+          <Flashcard
+            key={index}
+            question={flashcard.question}
+            answer={flashcard.answer}
+          />
+        ))
+      ) : (
+        <p></p>
+      )}
     </div>
   );
 };
@@ -18,7 +22,6 @@ const FlashcardGrid = ({ flashcards }) => {
 FlashcardGrid.propTypes = {
   flashcards: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.number.isRequired,
       question: PropTypes.string.isRequired,
       answer: PropTypes.string.isRequired,
     })

@@ -151,8 +151,9 @@ export const Home = () => {
                   submitHandler={submitHandler}
                   error={error}
                   loading={loading}
+                  setFlashcards={setFlashcards} // Pass down the setter
                 />
-                <FlashcardGrid flashcards={flashcards} />
+                <FlashcardGrid flashcards={flashcards} />{" "}
               </motion.div>
             </>
           ) : null}

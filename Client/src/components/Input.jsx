@@ -4,7 +4,7 @@ import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ImageIcon } from "lucide-react";
 import { Input as TextInput } from "@/components/ui/input";
-
+import FlashcardGrid from "@/components/FlashcardGrid"; // Assuming this is where FlashcardGrid is imported
 
 const FlashcardInput = ({
   quiz,
@@ -16,7 +16,7 @@ const FlashcardInput = ({
   const [loading, setLoading] = useState(false);
   const [flashcards, setFlashcards] = useState([]);
   const [errorMessage, setError] = useState(null);
-  const [imageUploaded, setImageUploaded] = useState(false); 
+  const [imageUploaded, setImageUploaded] = useState(false);
   const COLORS_TOP = ["#00BFFF", "#1E90FF"];
   const color = useMotionValue(COLORS_TOP[0]);
   const border = useMotionTemplate`1px solid ${color}`;
@@ -28,7 +28,7 @@ const FlashcardInput = ({
       const reader = new FileReader();
       reader.onload = (event) => {
         setImage(event.target.result);
-        setImageUploaded(true); 
+        setImageUploaded(true);
       };
       reader.readAsDataURL(file);
     }
@@ -37,9 +37,9 @@ const FlashcardInput = ({
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (image) {
-      await generateFlashcards();
+      await generateFlashcards(); // This will generate flashcards based on the image
     } else {
-      submitHandler(event);
+      submitHandler(event); // This will handle the text input
     }
   };
 
@@ -47,6 +47,12 @@ const FlashcardInput = ({
     setLoading(true);
     setError(null);
     try {
+      if (!image) {
+        throw new Error(
+          "No image uploaded. Please upload an image to generate flashcards."
+        );
+      }
+
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const imageData = {
@@ -55,21 +61,33 @@ const FlashcardInput = ({
           mimeType: "image/jpeg",
         },
       };
+
       const result = await model.generateContent([
         `Generate 6 flashcards based on the content of the provided image. Ensure each flashcard has a question and an answer.`,
         imageData,
       ]);
+
       const responseText = await result.response.text();
       console.log("Raw API response:", responseText);
       const flashcardsData = parseFlashcardsFromResponse(responseText);
-      if (flashcardsData) {
-        setFlashcards(flashcardsData);
-      } else {
-        throw new Error("Unable to extract valid flashcards from the response");
+
+      if (!flashcardsData || flashcardsData.length === 0) {
+        throw new Error(
+          "No valid flashcards found in the response. Please try a different image."
+        );
       }
+
+      // Format flashcards to match the expected structure
+      const formattedFlashcards = flashcardsData.map((flashcard, index) => ({
+        id: index + 1, // Ensure each flashcard has a unique ID
+        question: flashcard.question,
+        answer: flashcard.answer,
+      }));
+
+      setFlashcards(formattedFlashcards);
     } catch (error) {
       console.error("Error generating flashcards:", error);
-      setError("Failed to generate flashcards. Please try again.");
+      setError(`Failed to generate flashcards: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -78,7 +96,7 @@ const FlashcardInput = ({
   const parseFlashcardsFromResponse = (responseText) => {
     const flashcards = [];
     const flashcardPattern =
-      /\*\*Question:\*\* (.*?)\n\*\*Answer:\*\* (.*?)(?=\n|$)/g;
+      /\*\*Question:\*\* (.*?)\n\*\*Answer:\*\* (.*?)(?=\n\*\*Flashcard \d+|$)/gs;
 
     let match;
     while ((match = flashcardPattern.exec(responseText)) !== null) {
@@ -161,15 +179,7 @@ const FlashcardInput = ({
         </form>
         {flashcards.length > 0 && (
           <div className="mt-4">
-            <h3 className="text-lg font-semibold mb-2">
-              Generated Flashcards:
-            </h3>
-            {flashcards.map((flashcard, index) => (
-              <div key={index} className="mb-4">
-                <p className="font-medium">{flashcard.question}</p>
-                <p>{flashcard.answer}</p>
-              </div>
-            ))}
+            <FlashcardGrid flashcards={flashcards} />{" "}
           </div>
         )}
       </div>
