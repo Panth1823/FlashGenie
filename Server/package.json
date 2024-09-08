@@ -12,5 +12,8 @@
     "@cloudflare/vitest-pool-workers": "^0.4.5",
     "vitest": "1.5.0",
     "wrangler": "^3.72.2"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.17.1"
   }
 }

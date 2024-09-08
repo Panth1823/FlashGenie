@@ -7,3 +7,5 @@
     @apply bg-background text-foreground;
   }
 }
+
+@import '@shadcn/ui/dist/styles.css';

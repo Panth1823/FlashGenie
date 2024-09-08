@@ -24,18 +24,18 @@ export default {
 
 				const messages = [
 					{
-						role: "system",
+						role: 'system',
 						content: `You are an AI that generates flashcards based on the provided topic. Generate exactly 6 flashcards in JSON format as follows:
 						[
 							{ "id": 1, "question": "What is the question?", "answer": "The answer" },
 							...
 						]
-						Respond with only valid JSON, without any additional text or explanation.`
+						Respond with only valid JSON, without any additional text or explanation.`,
 					},
 					{
-						role: "user",
-						content: `Topic: ${quiz}`
-					}
+						role: 'user',
+						content: `Topic: ${quiz}`,
+					},
 				];
 
 				const aiResponse = await env.AI.run('@cf/mistral/mistral-7b-instruct-v0.1', {
@@ -46,10 +46,7 @@ export default {
 
 				const responseText = aiResponse.response.trim();
 				console.log('Raw AI Response:', responseText);
-
 				let flashcardsData;
-
-				// Attempt to extract the JSON from the response
 				const jsonStartIndex = responseText.indexOf('[');
 				const jsonEndIndex = responseText.lastIndexOf(']');
 
@@ -63,8 +60,6 @@ export default {
 				} else {
 					throw new Error('Response does not contain valid JSON.');
 				}
-
-				// Validate if the parsed data is an array of flashcards
 				if (!Array.isArray(flashcardsData) || flashcardsData.length !== 6) {
 					throw new Error('Response JSON is not a valid array of 6 flashcards.');
 				}
