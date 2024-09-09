@@ -45,16 +45,13 @@ export const Home = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "https://flashcardai.panthshah242.workers.dev/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ quiz }),
-        }
-      );
+      const response = await fetch(import.meta.env.VITE_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ quiz }),
+      });
 
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);
@@ -97,7 +94,7 @@ export const Home = () => {
         }}
         className="relative grid min-h-screen place-content-center overflow-hidden bg-gray-950 px-4 py-24 text-gray-200"
       >
-        <div className=" flex flex-col gap-28 ">
+        <div className=" flex flex-col gap-20 mx-auto">
           <div className="relative z-10 flex flex-col items-center gap-6">
             <h1 className="max-w-3xl text-center text-xl font-medium leading-tight text-transparent sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight text-white flex flex-col gap-3">
               <TextEffect per="char" preset="fade">

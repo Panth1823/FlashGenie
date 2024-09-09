@@ -68,7 +68,6 @@ const FlashcardInput = ({
       ]);
 
       const responseText = await result.response.text();
-      console.log("Raw API response:", responseText);
       const flashcardsData = parseFlashcardsFromResponse(responseText);
 
       if (!flashcardsData || flashcardsData.length === 0) {
@@ -77,9 +76,8 @@ const FlashcardInput = ({
         );
       }
 
-      // Format flashcards to match the expected structure
       const formattedFlashcards = flashcardsData.map((flashcard, index) => ({
-        id: index + 1, // Ensure each flashcard has a unique ID
+        id: index + 1,
         question: flashcard.question,
         answer: flashcard.answer,
       }));
@@ -129,7 +127,7 @@ const FlashcardInput = ({
                   required={!image}
                   onChange={handleMessageChange}
                   placeholder="Generate flashcards about ancient Egyptian civilization?"
-                  className="w-full h-full bg-transparent text-white placeholder:text-xs placeholder-gray-300 placeholder:lg:text-lg placeholder:sm:text-sm placeholder:md:text-base border-none focus:ring-0 rounded-none py-3 px-4 text-sm lg:text-lg md:text-base sm:text-sm"
+                  className="w-full h-full bg-transparent text-white placeholder:text-xs placeholder-gray-300 placeholder:lg:text-lg placeholder:sm:text-sm placeholder:md:text-base border-none focus:ring-0 rounded-none py-3 px-4 text-sm lg:text-lg md:text-base sm:text-sm focus:outline-none"
                 />
               </div>
               <div className="w-[20%] border-l border-gray-700 relative">
@@ -178,7 +176,7 @@ const FlashcardInput = ({
           )}
         </form>
         {flashcards.length > 0 && (
-          <div className="mt-4">
+          <div>
             <FlashcardGrid flashcards={flashcards} />{" "}
           </div>
         )}
