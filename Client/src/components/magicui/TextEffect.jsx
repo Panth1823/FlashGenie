@@ -114,7 +114,6 @@ export function TextEffect({
     <MotionTag
       initial="hidden"
       animate="visible"
-      aria-label={children}
       variants={containerVariants}
       className={className}
     >
