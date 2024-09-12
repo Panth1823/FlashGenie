@@ -4,7 +4,9 @@ import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ImageIcon } from "lucide-react";
 import { Input as TextInput } from "@/components/ui/input";
-import FlashcardGrid from "@/components/FlashcardGrid"; // Assuming this is where FlashcardGrid is imported
+import FlashcardGrid from "@/components/FlashcardGrid";
+
+const IMAGE_MAX_SIZE = 5 * 1024 * 1024;
 
 const FlashcardInput = ({
   quiz,
@@ -25,10 +27,15 @@ const FlashcardInput = ({
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > IMAGE_MAX_SIZE) {
+        setError("Image size cannot exceed 5MB.");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (event) => {
         setImage(event.target.result);
         setImageUploaded(true);
+        setError(null);
       };
       reader.readAsDataURL(file);
     }
@@ -37,9 +44,9 @@ const FlashcardInput = ({
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (image) {
-      await generateFlashcards(); // This will generate flashcards based on the image
+      await generateFlashcards();
     } else {
-      submitHandler(event); // This will handle the text input
+      submitHandler(event);
     }
   };
 
@@ -161,7 +168,6 @@ const FlashcardInput = ({
               </p>
             </div>
           </div>
-
           <motion.button
             style={{ border, boxShadow }}
             whileHover={{ scale: 1.045 }}
@@ -171,15 +177,18 @@ const FlashcardInput = ({
           >
             {loading ? "Generating..." : "Generate"}
           </motion.button>
-          {errorMessage && (
-            <div className="text-red-500 text-center mt-4">{errorMessage}</div>
-          )}
         </form>
         {flashcards.length > 0 && (
           <div>
-            <FlashcardGrid flashcards={flashcards} />{" "}
+            <FlashcardGrid flashcards={flashcards} />
           </div>
         )}
+        <div className="flex flex-col gap-2 pt-5">
+          {error && <div className="text-red-500">{error}</div>}
+          {errorMessage && (
+            <div className="text-red-500 text-center">{errorMessage}</div>
+          )}
+        </div>
       </div>
     </>
   );

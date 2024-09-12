@@ -14,6 +14,10 @@ import { TextEffect } from "./magicui/TextEffect";
 import SparklesText from "@/components/magicui/sparkles-text";
 
 const COLORS_TOP = ["#00BFFF", "#1E90FF"];
+const TEXT_MIN_LENGTH = 10;
+const TEXT_MAX_LENGTH = 1000;
+const IMAGE_MAX_SIZE = 5 * 1024 * 1024;
+
 export const Home = () => {
   const color = useMotionValue(COLORS_TOP[0]);
   const [quiz, setQuiz] = useState("");
@@ -43,6 +47,14 @@ export const Home = () => {
   const submitHandler = async (event) => {
     event.preventDefault();
     setLoading(true);
+
+    if (quiz.length < TEXT_MIN_LENGTH || quiz.length > TEXT_MAX_LENGTH) {
+      setError(
+        `Text input must be between ${TEXT_MIN_LENGTH} - ${TEXT_MAX_LENGTH} characters.`
+      );
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch(import.meta.env.VITE_API_URL, {
@@ -132,7 +144,7 @@ export const Home = () => {
           </div>
           {loading ? (
             <div className="text-center mt-4">
-              <p>Generating flashcards...</p>
+              <p>Generating ...</p>
             </div>
           ) : showQuiz ? (
             <>
@@ -148,9 +160,9 @@ export const Home = () => {
                   submitHandler={submitHandler}
                   error={error}
                   loading={loading}
-                  setFlashcards={setFlashcards} // Pass down the setter
+                  setFlashcards={setFlashcards}
                 />
-                <FlashcardGrid flashcards={flashcards} />{" "}
+                <FlashcardGrid flashcards={flashcards} />
               </motion.div>
             </>
           ) : null}
