@@ -25,12 +25,17 @@ export default {
 				const messages = [
 					{
 						role: 'system',
-						content: `You are an AI that generates flashcards based on the provided topic. Generate exactly 6 flashcards in JSON format as follows:
-						[
-							{ "id": 1, "question": "What is the question?", "answer": "The answer" },
-							...
-						]
-						Respond with only valid JSON, without any additional text or explanation.`,
+						content: `You are an AI that generates multiple choice questions (MCQs) based on the provided topic. Generate exactly 6 MCQs in JSON format as follows:
+                        [
+                            {
+                                "id": 1,
+                                "question": "What is the question?",
+                                "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+                                "correctAnswer": "The correct answer"
+                            },
+                            ...
+                        ]
+                        Ensure all responses are complete and do not exceed character limits. Respond with only valid JSON, without any additional text or explanation.`,
 					},
 					{
 						role: 'user',
@@ -44,27 +49,59 @@ export default {
 					stream: false,
 				});
 
-				const responseText = aiResponse.response.trim();
+				let responseText = aiResponse.response.trim();
 				console.log('Raw AI Response:', responseText);
-				let flashcardsData;
-				const jsonStartIndex = responseText.indexOf('[');
-				const jsonEndIndex = responseText.lastIndexOf(']');
 
-				if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
-					const jsonString = responseText.substring(jsonStartIndex, jsonEndIndex + 1);
-					try {
-						flashcardsData = JSON.parse(jsonString);
-					} catch (jsonError) {
-						throw new Error('Response contains malformed JSON.');
-					}
+				// Clean the response to remove any extraneous characters
+				if (responseText.startsWith('}')) {
+					responseText = responseText.slice(1); // Remove leading '}'
+				}
+
+				// Ensure the response is valid JSON
+				if (responseText.startsWith('[') && responseText.endsWith(']')) {
+					// It's already a valid JSON array
 				} else {
-					throw new Error('Response does not contain valid JSON.');
-				}
-				if (!Array.isArray(flashcardsData) || flashcardsData.length !== 6) {
-					throw new Error('Response JSON is not a valid array of 6 flashcards.');
+					throw new Error('Malformed JSON response from AI.');
 				}
 
-				return new Response(JSON.stringify(flashcardsData), {
+				let mcqData;
+
+				try {
+					mcqData = JSON.parse(responseText);
+				} catch (jsonError) {
+					console.error('Error parsing JSON:', jsonError);
+					throw new Error('Malformed JSON response from AI.');
+				}
+
+				// Validate each MCQ's structure
+				const validateMCQ = (mcq) => {
+					return (
+						typeof mcq.id === 'number' &&
+						typeof mcq.question === 'string' &&
+						Array.isArray(mcq.options) &&
+						mcq.options.length >= 2 && // At least 2 options
+						typeof mcq.correctAnswer === 'string'
+					);
+				};
+
+				// If we have less than 6 MCQs, pad the array with dummy questions
+				while (mcqData.length < 6) {
+					mcqData.push({
+						id: mcqData.length + 1,
+						question: "Placeholder question",
+						options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+						correctAnswer: "Option 1"
+					});
+				}
+
+				// Validate each MCQ's structure
+				for (const mcq of mcqData) {
+					if (!validateMCQ(mcq)) {
+						throw new Error('Invalid MCQ structure detected.');
+					}
+				}
+
+				return new Response(JSON.stringify(mcqData), {
 					headers: {
 						'Content-Type': 'application/json',
 						'Access-Control-Allow-Origin': '*',
