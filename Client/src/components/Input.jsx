@@ -28,7 +28,7 @@ const FlashcardInput = ({
     const file = e.target.files[0];
     if (file) {
       if (file.size > IMAGE_MAX_SIZE) {
-        setError("Image size cannot exceed 5MB.");
+        setError("Image size cannot exceed 5MB");
         return;
       }
       const reader = new FileReader();
