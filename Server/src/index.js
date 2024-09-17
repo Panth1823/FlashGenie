@@ -14,7 +14,6 @@ export default {
 		if (request.method === 'POST') {
 			try {
 				const { quiz } = await request.json();
-
 				if (typeof quiz !== 'string' || quiz.trim() === '') {
 					return new Response(JSON.stringify({ error: 'Prompt must be a non-empty string.' }), {
 						status: 400,
@@ -25,21 +24,11 @@ export default {
 				const messages = [
 					{
 						role: 'system',
-						content: `You are an AI that generates multiple choice questions (MCQs) based on the provided topic. Generate exactly 6 MCQs in JSON format as follows:
-                        [
-                            {
-                                "id": 1,
-                                "question": "What is the question?",
-                                "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
-                                "correctAnswer": "The correct answer"
-                            },
-                            ...
-                        ]
-                        Ensure all responses are complete and do not exceed character limits. Respond with only valid JSON, without any additional text or explanation.`,
+						content: `You are an AI that generates multiple choice questions (MCQs) based on the provided topic or prompt. Generate exactly 6 MCQs in JSON format. Each MCQ should have an id, question, options (array of 4 strings), and correctAnswer. Ensure all responses are complete and do not exceed character limits. Respond with only valid JSON, without any additional text or explanation.`,
 					},
 					{
 						role: 'user',
-						content: `Topic: ${quiz}`,
+						content: `Topic or Prompt: ${quiz}`,
 					},
 				];
 
@@ -52,20 +41,15 @@ export default {
 				let responseText = aiResponse.response.trim();
 				console.log('Raw AI Response:', responseText);
 
-				// Clean the response to remove any extraneous characters
-				if (responseText.startsWith('}')) {
-					responseText = responseText.slice(1); // Remove leading '}'
+				// Attempt to extract JSON from the response
+				const jsonMatch = responseText.match(/\[[\s\S]*\]/);
+				if (!jsonMatch) {
+					throw new Error('No valid JSON found in the AI response.');
 				}
 
-				// Ensure the response is valid JSON
-				if (responseText.startsWith('[') && responseText.endsWith(']')) {
-					// It's already a valid JSON array
-				} else {
-					throw new Error('Malformed JSON response from AI.');
-				}
+				responseText = jsonMatch[0];
 
 				let mcqData;
-
 				try {
 					mcqData = JSON.parse(responseText);
 				} catch (jsonError) {
@@ -73,32 +57,30 @@ export default {
 					throw new Error('Malformed JSON response from AI.');
 				}
 
-				// Validate each MCQ's structure
-				const validateMCQ = (mcq) => {
-					return (
-						typeof mcq.id === 'number' &&
-						typeof mcq.question === 'string' &&
-						Array.isArray(mcq.options) &&
-						mcq.options.length >= 2 && // At least 2 options
-						typeof mcq.correctAnswer === 'string'
-					);
+				// Validate and fix each MCQ's structure
+				const validateAndFixMCQ = (mcq, index) => {
+					const fixedMCQ = {
+						id: typeof mcq.id === 'number' ? mcq.id : index + 1,
+						question: typeof mcq.question === 'string' ? mcq.question : `Question ${index + 1}`,
+						options: Array.isArray(mcq.options) && mcq.options.length >= 4
+							? mcq.options.slice(0, 4)
+							: ['Option A', 'Option B', 'Option C', 'Option D'],
+						correctAnswer: typeof mcq.correctAnswer === 'string' ? mcq.correctAnswer : mcq.options[0] || 'Option A'
+					};
+					return fixedMCQ;
 				};
+
+				// Ensure we have exactly 6 MCQs
+				mcqData = mcqData.slice(0, 6).map(validateAndFixMCQ);
 
 				// If we have less than 6 MCQs, pad the array with dummy questions
 				while (mcqData.length < 6) {
 					mcqData.push({
 						id: mcqData.length + 1,
-						question: "Placeholder question",
-						options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-						correctAnswer: "Option 1"
+						question: `Placeholder question ${mcqData.length + 1}`,
+						options: ['Option A', 'Option B', 'Option C', 'Option D'],
+						correctAnswer: 'Option A'
 					});
-				}
-
-				// Validate each MCQ's structure
-				for (const mcq of mcqData) {
-					if (!validateMCQ(mcq)) {
-						throw new Error('Invalid MCQ structure detected.');
-					}
 				}
 
 				return new Response(JSON.stringify(mcqData), {
@@ -109,9 +91,15 @@ export default {
 				});
 			} catch (error) {
 				console.error('Request Handling Error:', error.message);
-				return new Response(JSON.stringify({ error: error.message }), {
+				return new Response(JSON.stringify({
+					error: 'An error occurred while processing your request.',
+					details: error.message
+				}), {
 					status: 500,
-					headers: { 'Access-Control-Allow-Origin': '*' },
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*'
+					},
 				});
 			}
 		}
