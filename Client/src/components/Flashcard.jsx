@@ -1,11 +1,16 @@
 import { useState } from "react";
 import CardFlip from "react-card-flip";
 
-const Flashcard = ({ question, answer }) => {
+const Flashcard = ({ question, options, correctAnswer }) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const handleClick = () => {
     setIsFlipped(!isFlipped);
+  };
+
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
   };
 
   return (
@@ -19,10 +24,25 @@ const Flashcard = ({ question, answer }) => {
             {question}
           </div>
           <div
-            className="card-back bg-gradient-to-r from-amber-500 to-pink-500 text-white flex items-center justify-center py-24 px-8"
+            className="card-back bg-gradient-to-r from-amber-500 to-pink-500 text-white flex flex-col items-center justify-center py-24 px-8"
             onClick={handleClick}
           >
-            <div className="text-lg font-semibold">{answer}</div>
+            {options.map((option, index) => (
+              <div
+                key={index}
+                onClick={() => handleOptionClick(option)}
+                className={`p-2 m-1 rounded cursor-pointer ${
+                  selectedOption === option
+                    ? option === correctAnswer
+                      ? "bg-green-500"
+                      : "bg-red-500"
+                    : "bg-gray-700"
+                }`}
+              >
+                {option}
+              </div>
+            ))}
+            {selectedOption && <div className="mt-2"></div>}
           </div>
         </CardFlip>
       </div>

@@ -14,7 +14,6 @@ export default {
 		if (request.method === 'POST') {
 			try {
 				const { quiz } = await request.json();
-
 				if (typeof quiz !== 'string' || quiz.trim() === '') {
 					return new Response(JSON.stringify({ error: 'Prompt must be a non-empty string.' }), {
 						status: 400,
@@ -25,16 +24,11 @@ export default {
 				const messages = [
 					{
 						role: 'system',
-						content: `You are an AI that generates flashcards based on the provided topic. Generate exactly 6 flashcards in JSON format as follows:
-						[
-							{ "id": 1, "question": "What is the question?", "answer": "The answer" },
-							...
-						]
-						Respond with only valid JSON, without any additional text or explanation.`,
+						content: `You are an AI that generates multiple choice questions (MCQs) based on the provided topic or prompt. Generate exactly 6 MCQs in JSON format. Each MCQ should have an id, question, options (array of 4 strings), and correctAnswer. Ensure all responses are complete and do not exceed character limits. Respond with only valid JSON, without any additional text or explanation.`,
 					},
 					{
 						role: 'user',
-						content: `Topic: ${quiz}`,
+						content: `Topic or Prompt: ${quiz}`,
 					},
 				];
 
@@ -44,27 +38,52 @@ export default {
 					stream: false,
 				});
 
-				const responseText = aiResponse.response.trim();
+				let responseText = aiResponse.response.trim();
 				console.log('Raw AI Response:', responseText);
-				let flashcardsData;
-				const jsonStartIndex = responseText.indexOf('[');
-				const jsonEndIndex = responseText.lastIndexOf(']');
 
-				if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
-					const jsonString = responseText.substring(jsonStartIndex, jsonEndIndex + 1);
-					try {
-						flashcardsData = JSON.parse(jsonString);
-					} catch (jsonError) {
-						throw new Error('Response contains malformed JSON.');
-					}
-				} else {
-					throw new Error('Response does not contain valid JSON.');
-				}
-				if (!Array.isArray(flashcardsData) || flashcardsData.length !== 6) {
-					throw new Error('Response JSON is not a valid array of 6 flashcards.');
+				// Attempt to extract JSON from the response
+				const jsonMatch = responseText.match(/\[[\s\S]*\]/);
+				if (!jsonMatch) {
+					throw new Error('No valid JSON found in the AI response.');
 				}
 
-				return new Response(JSON.stringify(flashcardsData), {
+				responseText = jsonMatch[0];
+
+				let mcqData;
+				try {
+					mcqData = JSON.parse(responseText);
+				} catch (jsonError) {
+					console.error('Error parsing JSON:', jsonError);
+					throw new Error('Malformed JSON response from AI.');
+				}
+
+				// Validate and fix each MCQ's structure
+				const validateAndFixMCQ = (mcq, index) => {
+					const fixedMCQ = {
+						id: typeof mcq.id === 'number' ? mcq.id : index + 1,
+						question: typeof mcq.question === 'string' ? mcq.question : `Question ${index + 1}`,
+						options: Array.isArray(mcq.options) && mcq.options.length >= 4
+							? mcq.options.slice(0, 4)
+							: ['Option A', 'Option B', 'Option C', 'Option D'],
+						correctAnswer: typeof mcq.correctAnswer === 'string' ? mcq.correctAnswer : mcq.options[0] || 'Option A'
+					};
+					return fixedMCQ;
+				};
+
+				// Ensure we have exactly 6 MCQs
+				mcqData = mcqData.slice(0, 6).map(validateAndFixMCQ);
+
+				// If we have less than 6 MCQs, pad the array with dummy questions
+				while (mcqData.length < 6) {
+					mcqData.push({
+						id: mcqData.length + 1,
+						question: `Placeholder question ${mcqData.length + 1}`,
+						options: ['Option A', 'Option B', 'Option C', 'Option D'],
+						correctAnswer: 'Option A'
+					});
+				}
+
+				return new Response(JSON.stringify(mcqData), {
 					headers: {
 						'Content-Type': 'application/json',
 						'Access-Control-Allow-Origin': '*',
@@ -72,9 +91,15 @@ export default {
 				});
 			} catch (error) {
 				console.error('Request Handling Error:', error.message);
-				return new Response(JSON.stringify({ error: error.message }), {
+				return new Response(JSON.stringify({
+					error: 'An error occurred while processing your request.',
+					details: error.message
+				}), {
 					status: 500,
-					headers: { 'Access-Control-Allow-Origin': '*' },
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*'
+					},
 				});
 			}
 		}
