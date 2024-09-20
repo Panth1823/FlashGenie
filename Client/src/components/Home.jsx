@@ -26,6 +26,7 @@ export const Home = () => {
   const [loading, setLoading] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [buttonVisible, setButtonVisible] = useState(true);
+  const [score, setScore] = useState({ correct: 0, total: 0 });
 
   useEffect(() => {
     animate(color, COLORS_TOP, {
@@ -167,7 +168,7 @@ export const Home = () => {
                   setFlashcards={setFlashcards}
                 />
                 {flashcards.length > 0 && (
-                  <FlashcardGrid flashcards={flashcards} />
+                  <FlashcardGrid flashcards={flashcards} score={score} setScore={setScore} />
                 )}
               </motion.div>
             </>

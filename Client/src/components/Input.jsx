@@ -23,6 +23,7 @@ const FlashcardInput = ({
   const color = useMotionValue(COLORS_TOP[0]);
   const border = useMotionTemplate`1px solid ${color}`;
   const boxShadow = useMotionTemplate`0px 4px 24px ${color}`;
+  const [score, setScore] = useState({ correct: 0, total: 0 });
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -70,7 +71,16 @@ const FlashcardInput = ({
       };
 
       const result = await model.generateContent([
-        `Generate 6 flashcards based on the content of the provided image. Ensure each flashcard has a question and an answer.`,
+        `Generate 6 multiple-choice flashcards based on the content of the provided image. For each flashcard, provide a question, the correct answer, and three incorrect options. Format the response as follows:
+
+      Flashcard 1:
+      Question: [Question]
+      Correct Answer: [Correct Answer]
+      Incorrect Option 1: [Incorrect Option 1]
+      Incorrect Option 2: [Incorrect Option 2]
+      Incorrect Option 3: [Incorrect Option 3]
+
+      Repeat this format for all 6 flashcards.`,
         imageData,
       ]);
 
@@ -83,13 +93,7 @@ const FlashcardInput = ({
         );
       }
 
-      const formattedFlashcards = flashcardsData.map((flashcard, index) => ({
-        id: index + 1,
-        question: flashcard.question,
-        answer: flashcard.answer,
-      }));
-
-      setFlashcards(formattedFlashcards);
+      setFlashcards(flashcardsData);
     } catch (error) {
       console.error("Error generating flashcards:", error);
       setError(`Failed to generate flashcards: ${error.message}`);
@@ -100,18 +104,34 @@ const FlashcardInput = ({
 
   const parseFlashcardsFromResponse = (responseText) => {
     const flashcards = [];
-    const flashcardPattern =
-      /\*\*Question:\*\* (.*?)\n\*\*Answer:\*\* (.*?)(?=\n\*\*Flashcard \d+|$)/gs;
+    const flashcardPattern = /Flashcard \d+:\nQuestion: (.*?)\nCorrect Answer: (.*?)\nIncorrect Option 1: (.*?)\nIncorrect Option 2: (.*?)\nIncorrect Option 3: (.*?)(?=\n\nFlashcard \d+:|$)/gs;
 
     let match;
     while ((match = flashcardPattern.exec(responseText)) !== null) {
+      const [, question, correctAnswer, incorrectOption1, incorrectOption2, incorrectOption3] = match;
       flashcards.push({
-        question: match[1].trim(),
-        answer: match[2].trim(),
+        id: flashcards.length + 1,
+        question: question.trim(),
+        answer: correctAnswer.trim(),
+        options: shuffleArray([
+          correctAnswer.trim(),
+          incorrectOption1.trim(),
+          incorrectOption2.trim(),
+          incorrectOption3.trim(),
+        ]),
+        correctAnswer: correctAnswer.trim(),
       });
     }
 
     return flashcards.length > 0 ? flashcards : null;
+  };
+
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   };
 
   return (
@@ -180,7 +200,7 @@ const FlashcardInput = ({
         </form>
         {flashcards.length > 0 && (
           <div>
-            <FlashcardGrid flashcards={flashcards} />
+            <FlashcardGrid flashcards={flashcards} score={score} setScore={setScore} />
           </div>
         )}
         <div className="flex flex-col gap-2 pt-5">
