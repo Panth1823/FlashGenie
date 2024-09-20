@@ -20,41 +20,47 @@ const Flashcard = ({ question, options, correctAnswer, updateScore }) => {
 
   return (
     <div className="max-w-lg w-full p-4">
-      <div className="card rounded-xl overflow-hidden cursor-pointer">
-        <CardFlip isFlipped={isFlipped}>
-          <div
-            className="card-front bg-gradient-to-r from-violet-600 to-indigo-600 text-white flex items-center justify-center text-lg font-semibold py-24 px-8"
-            onClick={handleClick}
-          >
-            {question}
-          </div>
-          <div
-            className="card-back bg-gradient-to-r from-amber-500 to-pink-500 text-white flex flex-col items-center justify-center py-24 px-8"
-            onClick={handleClick}
-          >
+      <CardFlip isFlipped={isFlipped} flipDirection="horizontal">
+        <div
+          className="card-side bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-xl shadow-xl p-6 h-64 flex items-center justify-center cursor-pointer"
+          onClick={handleClick}
+        >
+          <h2 className="text-2xl font-bold text-center">{question}</h2>
+        </div>
+        <div
+          className="card-side bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-xl shadow-xl p-6 h-64 flex flex-col justify-center cursor-pointer"
+          onClick={handleClick}
+        >
+          <div className="grid grid-cols-2 gap-2">
             {options && options.map((option, index) => (
-              <div
+              <button
                 key={index}
-                onClick={() => handleOptionClick(option)}
-                className={`p-2 m-1 rounded cursor-pointer ${
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOptionClick(option);
+                }}
+                className={`p-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedOption === option
                     ? option === correctAnswer
-                      ? "bg-green-500"
-                      : "bg-red-500"
-                    : "bg-gray-700"
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
+                    : "bg-white text-purple-700 hover:bg-purple-100"
                 } ${answered && option !== selectedOption ? "opacity-50" : ""}`}
+                disabled={answered}
               >
                 {option}
-              </div>
+              </button>
             ))}
-            {selectedOption && (
-              <div className="mt-2">
-                {selectedOption === correctAnswer ? "Correct!" : "Incorrect. The correct answer is: " + correctAnswer}
-              </div>
-            )}
           </div>
-        </CardFlip>
-      </div>
+          {selectedOption && selectedOption !== correctAnswer && (
+            <div className="mt-4 text-center text-sm">
+              <span className="text-red-300 font-bold">
+                Incorrect. The correct answer is: {correctAnswer}
+              </span>
+            </div>
+          )}
+        </div>
+      </CardFlip>
     </div>
   );
 };
