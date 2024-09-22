@@ -65,7 +65,7 @@ export default {
 						options: Array.isArray(mcq.options) && mcq.options.length >= 4
 							? mcq.options.slice(0, 4)
 							: ['Option A', 'Option B', 'Option C', 'Option D'],
-						correctAnswer: typeof mcq.correctAnswer === 'string' ? mcq.correctAnswer : mcq.options[0] || 'Option A'
+					correctAnswer: typeof mcq.correctAnswer === 'string' ? mcq.correctAnswer : mcq.options[0] || 'Option A'
 					};
 					return fixedMCQ;
 				};
