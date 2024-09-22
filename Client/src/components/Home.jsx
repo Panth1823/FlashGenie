@@ -12,7 +12,7 @@ import Input from "./Input";
 import FlashcardGrid from "./FlashcardGrid";
 import { TextEffect } from "./magicui/TextEffect";
 import SparklesText from "@/components/magicui/sparkles-text";
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 
 const COLORS_TOP = ["#00BFFF", "#1E90FF"];
 const TEXT_MIN_LENGTH = 10;

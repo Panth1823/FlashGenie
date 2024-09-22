@@ -14,6 +14,7 @@
     "wrangler": "^3.78.2"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.17.1"
+    "@google/generative-ai": "^0.17.1",
+    "lodash": "^4.17.21"
   }
 }
