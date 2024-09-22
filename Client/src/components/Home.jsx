@@ -12,7 +12,6 @@ import Input from "./Input";
 import FlashcardGrid from "./FlashcardGrid";
 import { TextEffect } from "./magicui/TextEffect";
 import SparklesText from "@/components/magicui/sparkles-text";
-import debounce from 'lodash/debounce';
 
 const COLORS_TOP = ["#00BFFF", "#1E90FF"];
 const TEXT_MIN_LENGTH = 10;
@@ -46,7 +45,7 @@ export const Home = () => {
     setQuiz(e.target.value);
   };
 
-  const debouncedSubmitHandler = debounce(async (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
     setLoading(true);
 
@@ -97,11 +96,6 @@ export const Home = () => {
     } finally {
       setLoading(false);
     }
-  }, 300);
-
-  const submitHandler = (event) => {
-    event.preventDefault();
-    debouncedSubmitHandler(event);
   };
 
   const handleButtonClick = () => {
@@ -184,5 +178,3 @@ export const Home = () => {
     </>
   );
 };
-
-export default Home;

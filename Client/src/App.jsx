@@ -1,12 +1,11 @@
-import React, { lazy, Suspense } from "react";
-
-const LazyHome = lazy(() => import("./components/Home"));
+import React from "react";
+import { Home } from "./components/Home";
 
 const App = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LazyHome />
-    </Suspense>
+    <>
+      <Home />
+    </>
   );
 };
 
