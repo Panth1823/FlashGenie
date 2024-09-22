@@ -3,9 +3,9 @@ import Flashcard from "./Flashcard";
 
 const FlashcardGrid = ({ flashcards, score, setScore }) => {
   const updateScore = (isCorrect) => {
-    setScore(prevScore => ({
+    setScore((prevScore) => ({
       correct: isCorrect ? prevScore.correct + 1 : prevScore.correct,
-      total: prevScore.total + 1
+      total: prevScore.total + 1,
     }));
   };
 

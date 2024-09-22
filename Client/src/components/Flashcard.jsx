@@ -32,25 +32,28 @@ const Flashcard = ({ question, options, correctAnswer, updateScore }) => {
           onClick={handleClick}
         >
           <div className="grid grid-cols-2 gap-2">
-            {options && options.map((option, index) => (
-              <button
-                key={index}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOptionClick(option);
-                }}
-                className={`p-2 rounded-lg text-sm font-medium transition-colors ${
-                  selectedOption === option
-                    ? option === correctAnswer
-                      ? "bg-green-500 text-white"
-                      : "bg-red-500 text-white"
-                    : "bg-white text-purple-700 hover:bg-purple-100"
-                } ${answered && option !== selectedOption ? "opacity-50" : ""}`}
-                disabled={answered}
-              >
-                {option}
-              </button>
-            ))}
+            {options &&
+              options.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOptionClick(option);
+                  }}
+                  className={`p-2 rounded-lg text-sm font-medium transition-colors ${
+                    selectedOption === option
+                      ? option === correctAnswer
+                        ? "bg-green-500 text-white"
+                        : "bg-red-500 text-white"
+                      : "bg-white text-purple-700 hover:bg-purple-100"
+                  } ${
+                    answered && option !== selectedOption ? "opacity-50" : ""
+                  }`}
+                  disabled={answered}
+                >
+                  {option}
+                </button>
+              ))}
           </div>
           {selectedOption && selectedOption !== correctAnswer && (
             <div className="mt-4 text-center text-sm">

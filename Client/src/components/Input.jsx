@@ -104,11 +104,19 @@ const FlashcardInput = ({
 
   const parseFlashcardsFromResponse = (responseText) => {
     const flashcards = [];
-    const flashcardPattern = /Flashcard \d+:\nQuestion: (.*?)\nCorrect Answer: (.*?)\nIncorrect Option 1: (.*?)\nIncorrect Option 2: (.*?)\nIncorrect Option 3: (.*?)(?=\n\nFlashcard \d+:|$)/gs;
+    const flashcardPattern =
+      /Flashcard \d+:\nQuestion: (.*?)\nCorrect Answer: (.*?)\nIncorrect Option 1: (.*?)\nIncorrect Option 2: (.*?)\nIncorrect Option 3: (.*?)(?=\n\nFlashcard \d+:|$)/gs;
 
     let match;
     while ((match = flashcardPattern.exec(responseText)) !== null) {
-      const [, question, correctAnswer, incorrectOption1, incorrectOption2, incorrectOption3] = match;
+      const [
+        ,
+        question,
+        correctAnswer,
+        incorrectOption1,
+        incorrectOption2,
+        incorrectOption3,
+      ] = match;
       flashcards.push({
         id: flashcards.length + 1,
         question: question.trim(),
@@ -200,7 +208,11 @@ const FlashcardInput = ({
         </form>
         {flashcards.length > 0 && (
           <div>
-            <FlashcardGrid flashcards={flashcards} score={score} setScore={setScore} />
+            <FlashcardGrid
+              flashcards={flashcards}
+              score={score}
+              setScore={setScore}
+            />
           </div>
         )}
         <div className="flex flex-col gap-2 pt-5">

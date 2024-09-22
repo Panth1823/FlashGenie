@@ -12,6 +12,7 @@ import Input from "./Input";
 import FlashcardGrid from "./FlashcardGrid";
 import { TextEffect } from "./magicui/TextEffect";
 import SparklesText from "@/components/magicui/sparkles-text";
+import { FaGithub } from "react-icons/fa";
 
 const COLORS_TOP = ["#00BFFF", "#1E90FF"];
 const TEXT_MIN_LENGTH = 10;
@@ -75,11 +76,10 @@ export const Home = () => {
       if (contentType && contentType.includes("application/json")) {
         const data = await response.json();
 
-        // Map the AI response to the expected format
         const formattedFlashcards = data.map((item) => ({
           id: item.id,
           question: item.question,
-          options: item.options, // Ensure options are included
+          options: item.options,
           correctAnswer: item.correctAnswer,
         }));
 
@@ -111,6 +111,14 @@ export const Home = () => {
         }}
         className="relative grid min-h-screen place-content-center overflow-hidden bg-gray-950 px-4 py-24 text-gray-200"
       >
+        <a
+          href="https://github.com/Panth1823/FlashGenie"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-50"
+        >
+          <FaGithub size={24} />
+        </a>
         <div className="flex flex-col gap-20 mx-auto">
           <div className="relative z-10 flex flex-col items-center gap-6">
             <h1 className="max-w-3xl text-center text-xl font-medium leading-tight text-transparent sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight text-white flex flex-col gap-3">
@@ -168,7 +176,11 @@ export const Home = () => {
                   setFlashcards={setFlashcards}
                 />
                 {flashcards.length > 0 && (
-                  <FlashcardGrid flashcards={flashcards} score={score} setScore={setScore} />
+                  <FlashcardGrid
+                    flashcards={flashcards}
+                    score={score}
+                    setScore={setScore}
+                  />
                 )}
               </motion.div>
             </>
